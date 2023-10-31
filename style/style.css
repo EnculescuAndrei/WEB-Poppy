@@ -1,0 +1,30 @@
+.custom-btn-students {
+    color: #fff;
+    background-color: #007bff9b;
+    border-color: #00000078;
+    margin: 10px;
+}
+
+.custom-btn-teachers {
+    color: #fff;
+    background-color: #dc354678;
+    border-color: #0000006a;
+    margin: 10px;
+}
+
+.custom-btn-students:hover{
+    box-shadow: 0 0 10px #007bff;
+    color: #fff;
+    background-color: #007bff;
+}
+
+.custom-btn-teachers:hover {
+    box-shadow: 0 0 10px #dc3545;
+    background-color: #dc3546;
+    color: #fff;
+}
+
+.title{
+    margin-top: 400px;
+    text-align: center;
+}
