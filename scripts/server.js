@@ -126,6 +126,13 @@ const Feedback = sequelize.define('feedback', {
         // validate: {
         //     isAfter: Activity.startTime
         // }
+    },
+    uniqueCode: {
+        type: Sequelize.STRING(30),
+        allowNull: false,
+        validate: {
+            len: [5, 30]
+        }
     }
 })
 
@@ -140,11 +147,11 @@ Professor.prototype.verifyPassword = async function (enteredPassword) {
 Professor.hasMany(Activity)
 Activity.belongsTo(Professor)
 
-Activity.hasMany(Feedback)
-Feedback.belongsTo(Activity)
+Activity.hasMany(Feedback, { foreignKey: 'uniqueCode', sourceKey: 'uniqueCode' });
+Feedback.belongsTo(Activity, { foreignKey: 'uniqueCode', targetKey: 'uniqueCode' });
 
-Student.hasMany(Feedback)
-Feedback.belongsTo(Student)
+//Student.hasMany(Feedback)
+//Feedback.belongsTo(Student)
 
 await sequelize.sync({ alter: true })
 
@@ -234,6 +241,7 @@ app.get('/students', async (req, res, next) => {
 })
 
 // get /activities?filter=a
+// Used by a student when connecting to an activity using the uniqueCode
 app.get('/activities', async (req, res, next) => {
     try {
         const activities = await Activity.findAll()
@@ -279,19 +287,21 @@ app.get('/professors/:pid/activities', async (req, res, next) => {
 })
 
 // Post for feedback -- called by student when pressed a button
-// post /activities/feedback?filter=uniqueCode
 app.post('/activities/:uniqueCode/feedback', async (req, res, next) => {
     try {
-        const activities = await Activity.findAll({ uniqueCode: code })
+        const code = req.params.uniqueCode
+        const activities = await Activity.findAll({ where:{uniqueCode: code} })
         if (activities) {
-            const feedback = new Feedback(req.body)
-            const code = req.params.uniqueCode
-            const activity = await Activity.findAll({ uniqueCode: code })
-            feedback.activityId = activity.id
-            feedback.uniqueCode = activity.uniqueCode
-            await feedback.save()
-            res.status(201).json(feedback)
-        } else {
+            const feedbackPromises = activities.map(async (activity) => {
+                const feedback = new Feedback(req.body)
+                feedback.uniqueCode = activity.uniqueCode
+                await feedback.save()
+                return feedback
+            })
+
+            const feedbackArray = await Promise.all(feedbackPromises)
+            res.status(201).json(feedbackArray)
+        }else {
             res.status(404).json({ message: 'Activity not found' })
         }
     } catch (error) {
@@ -300,11 +310,10 @@ app.post('/activities/:uniqueCode/feedback', async (req, res, next) => {
 })
 
 // Get for feedback -- called by professor
-// get /activities/feedback?filter=uniqueCode
 app.get('/activities/:uniqueCode/feedback', async (req, res, next) => {
     try {
         const code = req.params.uniqueCode
-        const feedback = await Feedback.findAll({ uniqueCode: code })
+        const feedback = await Feedback.findAll({ where:{uniqueCode: code} })
         res.status(200).json(feedback)
     } catch (error) {
         next(error)
