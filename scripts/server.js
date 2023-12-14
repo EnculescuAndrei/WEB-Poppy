@@ -71,7 +71,14 @@ const Activity = sequelize.define('activity', {
             len: [5, 30]
         }
     },
-    timeLimit: Sequelize.INTEGER
+    startTime: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    endTime: {
+        type: Sequelize.STRING,
+        allowNull: false
+    }
 })
 
 const Student = sequelize.define('student', {
@@ -107,6 +114,21 @@ const Student = sequelize.define('student', {
     }
 })
 
+const Feedback = sequelize.define('feedback', {
+    reactType: {
+        type: Sequelize.STRING(10),
+        allowNull: false,
+        isIn: [['smiley', 'frowny', 'surprised', 'confused']]
+    },
+    reactTime: {
+        type: Sequelize.STRING,
+        allowNull: false
+        // validate: {
+        //     isAfter: Activity.startTime
+        // }
+    }
+})
+
 Student.prototype.verifyPassword = async function (enteredPassword) {
     return enteredPassword === this.password;
 }
@@ -118,8 +140,11 @@ Professor.prototype.verifyPassword = async function (enteredPassword) {
 Professor.hasMany(Activity)
 Activity.belongsTo(Professor)
 
-Student.belongsToMany(Activity, { through: "enrolment" })
-Activity.belongsToMany(Student, { through: "enrolment" })
+Activity.hasMany(Feedback)
+Feedback.belongsTo(Activity)
+
+Student.hasMany(Feedback)
+Feedback.belongsTo(Student)
 
 await sequelize.sync({ alter: true })
 
@@ -216,43 +241,12 @@ app.get('/activities', async (req, res, next) => {
         if (!filter) {
             return res.status(400).json({ error: 'Filter is required' });
         }
-
         const filteredActivity = activities.filter(activity => activity.uniqueCode.toLowerCase() === filter.toLowerCase())
         res.json(filteredActivity)
-        // adaugam activitatea filteredActivity in DB la student
-        // sa bage parola si usernameul pentru confirmare -> luam id-ul din baza de date -> punem si id in enrolment
     } catch (error) {
         next(error)
     }
 })
-
-// TODO
-app.post('/enroll', async (req, res, next) => {
-    try {
-        const activities = await Activity.findAll();
-        const filter = req.query.filter;
-
-        if (!filter) {
-            return res.status(400).json({ error: 'Filter is required' })
-        }
-
-        const filteredActivity = activities.find(activity => activity.uniqueCode.toLowerCase() === filter.toLowerCase())
-
-        if (!filteredActivity) {
-            return res.status(404).json({ error: 'Activity not found' })
-        }
-
-        // const studentId = req.student.id;
-        await Enrolment.create({
-            studentId: req.student.id,
-            activityId: filteredActivity.id,
-        })
-
-        res.json({ message: 'Enrolment successful' })
-    } catch (error) {
-        next(error)
-    }
-});
 
 // Post for activity - called when creating activity
 app.post('/professors/:pid/activities', async (req, res, next) => {
@@ -271,9 +265,9 @@ app.post('/professors/:pid/activities', async (req, res, next) => {
     }
 })
 
-app.get('/professors/:username/activities', async (req, res, next) => {
+app.get('/professors/:pid/activities', async (req, res, next) => {
     try {
-        const professor = await Professor.findAll(req.params.username, { include: [Activity] })
+        const professor = await Professor.findByPk(req.params.pid, { include: [Activity] })
         if (professor) {
             res.status(200).json(professor.activities)
         } else {
@@ -284,16 +278,34 @@ app.get('/professors/:username/activities', async (req, res, next) => {
     }
 })
 
-// TODO
-app.get('/students/:username/activities', async (req, res, next) => {
+// Post for feedback -- called by student when pressed a button
+// post /activities/feedback?filter=uniqueCode
+app.post('/activities/:uniqueCode/feedback', async (req, res, next) => {
     try {
-        const student = await Student.findAll(req.params.username, { include: [Activity] })
-        const studentID = await Activity.findAll(req.params.studentId, { include: [Student] })
-        if (student) {
-            res.status(200).json(student.activities)
+        const activities = await Activity.findAll({ uniqueCode: code })
+        if (activities) {
+            const feedback = new Feedback(req.body)
+            const code = req.params.uniqueCode
+            const activity = await Activity.findAll({ uniqueCode: code })
+            feedback.activityId = activity.id
+            feedback.uniqueCode = activity.uniqueCode
+            await feedback.save()
+            res.status(201).json(feedback)
         } else {
-            res.status(404).json({ message: 'Activities not found' })
+            res.status(404).json({ message: 'Activity not found' })
         }
+    } catch (error) {
+        next(error)
+    }
+})
+
+// Get for feedback -- called by professor
+// get /activities/feedback?filter=uniqueCode
+app.get('/activities/:uniqueCode/feedback', async (req, res, next) => {
+    try {
+        const code = req.params.uniqueCode
+        const feedback = await Feedback.findAll({ uniqueCode: code })
+        res.status(200).json(feedback)
     } catch (error) {
         next(error)
     }
@@ -349,51 +361,6 @@ app.delete('/professors/:pid/activities/:aid', async (req, res, next) => {
         next(error)
     }
 })
-
-// // Intermediary table
-// app.post('/students/:sid/studentActivity', async (req, res, next) => {
-//     try {
-//         const student = await Student.findByPk(req.params.sid)
-//         const activity = await Activity.findByPk(req.body.aid)
-//         if (student && activity) {
-//             await student.addActivity(activity)
-//             res.status(201).json({ message: 'Enrolled' })
-//         } else {
-//             res.status(404).json({ message: 'Not found' })
-//         }
-//     } catch (error) {
-//         next(error)
-//     }
-// })
-
-// app.get('/students/:sid/studentActivity', async (req, res, next) => {
-//     try {
-//         const student = await Student.findByPk(req.params.sid)
-//         const activity = await Activity.findByPk(req.body.aid)
-//         if (student && activity) {
-//             res.status(200).json(student.studentActivity)
-//         } else {
-//             res.status(404).json({ message: 'Activities not found' })
-//         }
-//     } catch (error) {
-//         next(error)
-//     }
-// })
-
-// app.post('/activities/:aid/studentActivity', async (req, res, next) => {
-//     try {
-//         const activity = await Activity.findByPk(req.params.aid)
-//         const student = await Student.findByPk(req.body.sid)
-//         if (activity && student) {
-//             await activity.addStudent(student)
-//             res.status(201).json({ message: 'Enrolled' })
-//         } else {
-//             res.status(404).json({ message: 'Not found' })
-//         }
-//     } catch (error) {
-//         next(error)
-//     }
-// })
 
 // Modify professor
 app.put('/professors/:pid', async (req, res, next) => {
