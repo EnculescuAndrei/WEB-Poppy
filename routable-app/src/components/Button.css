@@ -28,3 +28,24 @@
     margin-top: 400px;
     text-align: center;
 }
+
+.custom-btn-primary {
+    background-color: #3498db;
+    color: #fff;
+  }
+.custom-btn-primary:hover {
+    box-shadow: 0 0 10px #007bff;
+    color: #fff;
+    background-color: #007bff;
+  }
+
+  .custom-btn-SingUp {
+    background-color: #3498db;
+    color: #fff;
+    width: 300px;
+  }
+.custom-btn-SingUp:hover {
+    box-shadow: 0 0 10px #007bff;
+    color: #fff;
+    background-color: #007bff;
+  }

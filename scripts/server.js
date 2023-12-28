@@ -1,5 +1,8 @@
 import express from 'express'
 import Sequelize from 'sequelize'
+///
+import cors from 'cors';
+///
 const Op = Sequelize.Op
 
 const sequelize = new Sequelize({
@@ -156,6 +159,9 @@ Feedback.belongsTo(Activity, { foreignKey: 'uniqueCode', targetKey: 'uniqueCode'
 await sequelize.sync({ alter: true })
 
 const app = express()
+///
+app.use(cors());
+///
 
 app.use(express.json())
 
@@ -437,4 +443,6 @@ app.use((err, req, res, next) => {
     res.status(500).json({ message: 'Error' })
 })
 
-app.listen(7777)
+app.listen(7777, () => {
+    console.log('Server is running on port 7777');
+  });
