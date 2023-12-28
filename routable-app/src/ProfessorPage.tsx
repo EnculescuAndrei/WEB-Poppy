@@ -10,7 +10,7 @@ interface FormData {
   password: string;
 }
 
-const StudentSignupPage = () => {
+const ProfessorSignupPage = () => {
   const [formData, setFormData] = useState<FormData>({
     username: '',
     name: '',
@@ -32,7 +32,7 @@ const StudentSignupPage = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:7777/students/signup', {
+      const response = await fetch('http://localhost:7777/professors/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -41,13 +41,13 @@ const StudentSignupPage = () => {
       });
 
       if (response.ok) {
-        const newStudent = await response.json();
-        console.log('New student created:', newStudent);
+        const newProfessor = await response.json();
+        console.log('New professor created:', newProfessor);
 
-        navigate('/students/login');
+        navigate('/professors/login');
 
       } else {
-        console.error('Failed to create student');
+        console.error('Failed to create professor');
         const errorData = await response.json();
         if (errorData && errorData.error === 'Username already exists') {
           setShowToast(true);
@@ -129,7 +129,7 @@ const StudentSignupPage = () => {
           />
           {passwordError && <span className="validation-label">{passwordError}</span>}
         </div>
-        <Button onClick={handleSubmit} color="SignUp" type="button">
+        <Button onClick={handleSubmit} color="SignUp-Professor" type="button">
           Sign Up
         </Button>
 
@@ -147,11 +147,11 @@ const StudentSignupPage = () => {
         </div>
 
         <div className="text-center mt-3">
-          <p>Already have an account? <a href="/students/login">Go to log in.</a></p>
+          <p>Already have an account? <a href="/professors/login">Go to log in.</a></p>
         </div>
       </form>
     </div>
   );
 };
 
-export default StudentSignupPage;
+export default ProfessorSignupPage;

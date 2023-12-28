@@ -7,7 +7,7 @@ interface LoginFormData {
   password: string;
 }
 
-const StudentLoginPage = () => {
+const ProfessorLoginPage = () => {
   const [loginFormData, setLoginFormData] = useState<LoginFormData>({
     username: '',
     password: '',
@@ -23,7 +23,7 @@ const StudentLoginPage = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:7777/students/login', {
+      const response = await fetch('http://localhost:7777/professors/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -91,16 +91,16 @@ const StudentLoginPage = () => {
           />
           {passwordError && <span className="validation-label">{passwordError}</span>}
         </div>
-        <Button onClick={handleLogin} color="SignUp" type="button">
+        <Button onClick={handleLogin} color="SignUp-Professor" type="button">
           Log In
         </Button>
 
         <div className="text-center mt-3">
-          <p>Don't have an account? <a href="/students/signup">Sign Up</a></p>
+          <p>Don't have an account? <a href="/professors/signup">Sign Up</a></p>
         </div>
       </form>
     </div>
   );
 };
 
-export default StudentLoginPage;
+export default ProfessorLoginPage;

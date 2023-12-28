@@ -10,8 +10,8 @@ function HomePage() {
         <Button to="/students/signup" color="students">
           Student
         </Button>
-        <Button to="/teachers/signup" color="teachers">
-          Teacher
+        <Button to="/professors/signup" color="professors">
+          Professor
         </Button>
       </div>
     </div>

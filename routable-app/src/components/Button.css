@@ -1,51 +1,65 @@
 .custom-btn-students {
-    color: #fff;
-    background-color: #007bff9b;
-    border-color: #00000078;
-    margin: 10px;
+  color: #fff;
+  background-color: #007bff9b;
+  border-color: #00000078;
+  margin: 10px;
 }
 
-.custom-btn-teachers {
-    color: #fff;
-    background-color: #dc354678;
-    border-color: #0000006a;
-    margin: 10px;
+.custom-btn-professors {
+  color: #fff;
+  background-color: #dc354678;
+  border-color: #0000006a;
+  margin: 10px;
 }
 
-.custom-btn-students:hover{
-    box-shadow: 0 0 10px #007bff;
-    color: #fff;
-    background-color: #007bff;
+.custom-btn-students:hover {
+  box-shadow: 0 0 10px #007bff;
+  color: #fff;
+  background-color: #007bff;
 }
 
-.custom-btn-teachers:hover {
-    box-shadow: 0 0 10px #dc3545;
-    background-color: #dc3546;
-    color: #fff;
+.custom-btn-professors:hover {
+  box-shadow: 0 0 10px #dc3545;
+  background-color: #dc3546;
+  color: #fff;
 }
 
-.title{
-    margin-top: 400px;
-    text-align: center;
+.title {
+  margin-top: 400px;
+  text-align: center;
 }
 
 .custom-btn-primary {
-    background-color: #3498db;
-    color: #fff;
-  }
-.custom-btn-primary:hover {
-    box-shadow: 0 0 10px #007bff;
-    color: #fff;
-    background-color: #007bff;
-  }
+  background-color: #3498db;
+  color: #fff;
+}
 
-  .custom-btn-SingUp {
-    background-color: #3498db;
-    color: #fff;
-    width: 300px;
-  }
-.custom-btn-SingUp:hover {
-    box-shadow: 0 0 10px #007bff;
-    color: #fff;
-    background-color: #007bff;
-  }
+.custom-btn-primary:hover {
+  box-shadow: 0 0 10px #007bff;
+  color: #fff;
+  background-color: #007bff;
+}
+
+.custom-btn-SignUp {
+  background-color: #3498db;
+  color: #fff;
+  width: 300px;
+}
+
+.custom-btn-SignUp:hover {
+  box-shadow: 0 0 10px #007bff;
+  color: #fff;
+  background-color: #007bff;
+}
+
+.custom-btn-SignUp-Professor {
+  background-color: #dc3546;
+  color: #fff;
+  width: 300px;
+}
+
+.custom-btn-SignUp-Professor:hover {
+  box-shadow: 0 0 10px #dc3545;
+  color: #fff;
+  background-color: #dc3545;
+}
