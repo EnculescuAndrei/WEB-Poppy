@@ -1,17 +1,8 @@
-// Button.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './Button.css';
+import '../styles/Button.css';
 
-interface Props {
-  children: string;
-  color?: string;
-  to?: string;
-  onClick?: () => void;
-  type?: 'button' | 'submit' | 'reset';
-}
-
-function Button({ children, onClick, color = 'primary', to, type = 'button' }: Props) {
+function Button({ children, onClick, color = 'primary', to, type = 'button' }) {
   const buttonClassName = `btn  custom-btn-${color}`;
 
   if (to) {

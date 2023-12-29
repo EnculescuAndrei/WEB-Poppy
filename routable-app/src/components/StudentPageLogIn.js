@@ -1,20 +1,15 @@
 import React, { useState } from 'react';
-import Button from './components/Button';
-import './StudentPageLogIn.css';
+import Button from './Button';
+import '../styles/StudentPageLogIn.css';
 
-interface LoginFormData {
-  username: string;
-  password: string;
-}
-
-const ProfessorLoginPage = () => {
-  const [loginFormData, setLoginFormData] = useState<LoginFormData>({
+const StudentLoginPage = () => {
+  const [loginFormData, setLoginFormData] = useState({
     username: '',
     password: '',
   });
 
-  const [usernameError, setUsernameError] = useState<string | null>(null);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [usernameError, setUsernameError] = useState(null);
+  const [passwordError, setPasswordError] = useState(null);
 
   const handleLogin = async () => {
     try {
@@ -23,7 +18,7 @@ const ProfessorLoginPage = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:7777/professors/login', {
+      const response = await fetch('http://localhost:7777/students/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -32,10 +27,11 @@ const ProfessorLoginPage = () => {
       });
 
       if (response.ok) {
-        //Redirect to inserting code page
+        // Redirect to inserting code page
+        window.location.href = '/student/activities';
         console.log('Login successful');
       } else {
-        //Toast de eroare
+        // Toast de eroare
         console.error('Failed to log in');
       }
     } catch (error) {
@@ -43,20 +39,20 @@ const ProfessorLoginPage = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e) => {
     setLoginFormData({
       ...loginFormData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const validateUsername = (username: string) => {
+  const validateUsername = (username) => {
     const isValid = username.length > 0;
     setUsernameError(isValid ? null : 'Username is required');
     return isValid;
   };
 
-  const validatePassword = (password: string) => {
+  const validatePassword = (password) => {
     const isValid = password.length > 0;
     setPasswordError(isValid ? null : 'Password is required');
     return isValid;
@@ -91,16 +87,16 @@ const ProfessorLoginPage = () => {
           />
           {passwordError && <span className="validation-label">{passwordError}</span>}
         </div>
-        <Button onClick={handleLogin} color="SignUp-Professor" type="button">
+        <Button onClick={handleLogin} color="SignUp" type="button">
           Log In
         </Button>
 
         <div className="text-center mt-3">
-          <p>Don't have an account? <a href="/professors/signup">Sign Up</a></p>
+          <p>Don't have an account? <a href="/students/signup">Sign Up</a></p>
         </div>
       </form>
     </div>
   );
 };
 
-export default ProfessorLoginPage;
+export default StudentLoginPage;

@@ -56,7 +56,7 @@ const Activity = sequelize.define('activity', {
         allowNull: false,
         validate: {
             isDate: true,
-            isAfter: new Date().toISOString()
+            isAfter: new Date().toISOString().split('T')[0]
         }
     },
     description: {
@@ -422,8 +422,8 @@ app.put('/professors/:pid/activities/:aid', async (req, res, next) => {
     try {
         const results = await Activity.update(req.body, {
             where: {
-                id: req.params.pid,
-                activityId: req.params.aid
+                professorId: req.params.pid,
+                id: req.params.aid
             },
             fields: ['name', 'date', 'description', 'timeLimit']
         })

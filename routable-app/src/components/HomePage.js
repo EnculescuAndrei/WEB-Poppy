@@ -1,6 +1,5 @@
-// HomePage.tsx
 import React from 'react';
-import Button from './components/Button';
+import Button from './Button';
 
 function HomePage() {
   return (

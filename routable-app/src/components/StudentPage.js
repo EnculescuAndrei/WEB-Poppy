@@ -1,26 +1,19 @@
 import React, { useState } from 'react';
-import Button from './components/Button';
+import Button from './Button';
 import { useNavigate } from 'react-router-dom';
-import './StudentPage.css';
+import '../styles/StudentPage.css';
 
-interface FormData {
-  username: string;
-  name: string;
-  surname: string;
-  password: string;
-}
-
-const ProfessorSignupPage = () => {
-  const [formData, setFormData] = useState<FormData>({
+const StudentSignupPage = () => {
+  const [formData, setFormData] = useState({
     username: '',
     name: '',
     surname: '',
     password: '',
   });
 
-  const [nameError, setNameError] = useState<string | null>(null);
-  const [surnameError, setSurnameError] = useState<string | null>(null);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [nameError, setNameError] = useState(null);
+  const [surnameError, setSurnameError] = useState(null);
+  const [passwordError, setPasswordError] = useState(null);
   const [showToast, setShowToast] = useState(false);
 
   const navigate = useNavigate();
@@ -32,7 +25,7 @@ const ProfessorSignupPage = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:7777/professors/signup', {
+      const response = await fetch('http://localhost:7777/students/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -41,13 +34,13 @@ const ProfessorSignupPage = () => {
       });
 
       if (response.ok) {
-        const newProfessor = await response.json();
-        console.log('New professor created:', newProfessor);
+        const newStudent = await response.json();
+        console.log('New student created:', newStudent);
 
-        navigate('/professors/login');
+        navigate('/students/login');
 
       } else {
-        console.error('Failed to create professor');
+        console.error('Failed to create student');
         const errorData = await response.json();
         if (errorData && errorData.error === 'Username already exists') {
           setShowToast(true);
@@ -58,26 +51,26 @@ const ProfessorSignupPage = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const validateName = (name: string) => {
+  const validateName = (name) => {
     const isValid = name.length >= 1 && name.length <= 20;
     setNameError(isValid ? null : 'Name must be between 1 and 20 characters');
     return isValid;
   };
 
-  const validateSurname = (surname: string) => {
+  const validateSurname = (surname) => {
     const isValid = surname.length >= 1 && surname.length <= 20;
     setSurnameError(isValid ? null : 'Surname must be between 1 and 20 characters');
     return isValid;
   };
 
-  const validatePassword = (password: string) => {
+  const validatePassword = (password) => {
     const isValid = password.length >= 6 && password.length <= 20 && /\d/.test(password);
     setPasswordError(isValid ? null : 'Password must be between 6 and 20 characters and contain at least 1 number');
     return isValid;
@@ -129,7 +122,7 @@ const ProfessorSignupPage = () => {
           />
           {passwordError && <span className="validation-label">{passwordError}</span>}
         </div>
-        <Button onClick={handleSubmit} color="SignUp-Professor" type="button">
+        <Button onClick={handleSubmit} color="SignUp" type="button">
           Sign Up
         </Button>
 
@@ -147,11 +140,11 @@ const ProfessorSignupPage = () => {
         </div>
 
         <div className="text-center mt-3">
-          <p>Already have an account? <a href="/professors/login">Go to log in.</a></p>
+          <p>Already have an account? <a href="/students/login">Go to log in.</a></p>
         </div>
       </form>
     </div>
   );
 };
 
-export default ProfessorSignupPage;
+export default StudentSignupPage;

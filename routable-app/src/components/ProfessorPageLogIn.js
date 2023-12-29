@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
-import Button from './components/Button';
-import './StudentPageLogIn.css';
+import Button from './Button';
+import '../styles/StudentPageLogIn.css';
+import { useNavigate } from 'react-router-dom';
 
-interface LoginFormData {
-  username: string;
-  password: string;
-}
-
-const StudentLoginPage = () => {
-  const [loginFormData, setLoginFormData] = useState<LoginFormData>({
+const ProfessorLoginPage = () => {
+  const [loginFormData, setLoginFormData] = useState({
     username: '',
     password: '',
   });
 
-  const [usernameError, setUsernameError] = useState<string | null>(null);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [usernameError, setUsernameError] = useState(null);
+  const [passwordError, setPasswordError] = useState(null);
+
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
@@ -23,7 +21,7 @@ const StudentLoginPage = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:7777/students/login', {
+      const response = await fetch('http://localhost:7777/professors/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -32,10 +30,11 @@ const StudentLoginPage = () => {
       });
 
       if (response.ok) {
-        //Redirect to inserting code page
+        // Redirect to /professors/activities upon successful login
+        navigate('/professors/activities');
         console.log('Login successful');
       } else {
-        //Toast de eroare
+        // Toast de eroare
         console.error('Failed to log in');
       }
     } catch (error) {
@@ -43,20 +42,20 @@ const StudentLoginPage = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e) => {
     setLoginFormData({
       ...loginFormData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const validateUsername = (username: string) => {
+  const validateUsername = (username) => {
     const isValid = username.length > 0;
     setUsernameError(isValid ? null : 'Username is required');
     return isValid;
   };
 
-  const validatePassword = (password: string) => {
+  const validatePassword = (password) => {
     const isValid = password.length > 0;
     setPasswordError(isValid ? null : 'Password is required');
     return isValid;
@@ -91,16 +90,16 @@ const StudentLoginPage = () => {
           />
           {passwordError && <span className="validation-label">{passwordError}</span>}
         </div>
-        <Button onClick={handleLogin} color="SignUp" type="button">
+        <Button onClick={handleLogin} color="SignUp-Professor" type="button">
           Log In
         </Button>
 
         <div className="text-center mt-3">
-          <p>Don't have an account? <a href="/students/signup">Sign Up</a></p>
+          <p>Don't have an account? <a href="/professors/signup">Sign Up</a></p>
         </div>
       </form>
     </div>
   );
 };
 
-export default StudentLoginPage;
+export default ProfessorLoginPage;
