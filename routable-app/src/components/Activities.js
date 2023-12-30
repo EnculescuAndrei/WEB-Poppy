@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import axiosInstance from '../axiosInstance'; // Import axiosInstance instead of axios
+import React, { useState, useEffect, useCallback } from 'react';
+import axiosInstance from '../axiosInstance';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useParams } from 'react-router-dom';
 
 const ActivityManager = () => {
   const [activities, setActivities] = useState([]);
@@ -14,20 +15,22 @@ const ActivityManager = () => {
     endTime: '',
   });
   const [editingIndex, setEditingIndex] = useState(null);
-  const professorId = '1';
+  const { professorId } = useParams();
 
-  useEffect(() => {
-    fetchActivities();
-  }, []);
-
-  const fetchActivities = async () => {
+  const fetchActivities = useCallback(async () => {
     try {
       const response = await axiosInstance.get(`/professors/${professorId}/activities`);
       setActivities(response.data);
     } catch (error) {
       console.error('Error fetching activities:', error);
     }
-  };
+  }, [professorId]);
+
+  useEffect(() => {
+    fetchActivities();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchActivities]);
 
   const createActivity = async () => {
     try {
@@ -103,7 +106,6 @@ const ActivityManager = () => {
   const handleEdit = (index) => {
     setEditingIndex(index);
     const activityToEdit = activities[index];
-    // Convert date string to Date object
     const date = new Date(activityToEdit.date);
     setFormData({ ...activityToEdit, date });
   };

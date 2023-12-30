@@ -30,9 +30,11 @@ const ProfessorLoginPage = () => {
       });
 
       if (response.ok) {
-        // Redirect to /professors/activities upon successful login
-        navigate('/professors/activities');
+        const data = await response.json();    //
+        const {id}=data;     //
+        navigate(`/professors/activities/${id}`);  //
         console.log('Login successful');
+        console.log('Data from response.json():', data);
       } else {
         // Toast de eroare
         console.error('Failed to log in');

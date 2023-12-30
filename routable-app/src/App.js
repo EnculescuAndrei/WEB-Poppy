@@ -19,7 +19,7 @@ function App() {
         <Route path='/students/login' element={<StudentLoginPage/>}/>
         <Route path='/professors/login' element={<ProfessorLoginPage/>}/>
         <Route path='/student/activities' element={<StudentHomePage/>}/>
-        <Route path='/professors/activities' element={<ActivityManager/>}/>
+        <Route path='/professors/activities/:professorId' element={<ActivityManager/>}/>
       </Routes>
     </Router>
   );
