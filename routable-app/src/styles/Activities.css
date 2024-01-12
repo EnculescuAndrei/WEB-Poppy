@@ -11,3 +11,35 @@
   max-height: 100vh;
   direction: rtl;
 }
+
+.edit-button {
+  background-color: FFC107; 
+  color: #fff;
+  margin-right: 10px;
+}
+
+.edit-button:hover {
+  background-color: #ab8207;
+  color: #fff
+}
+
+.view-button {
+  background-color: #28a745; 
+  color: #fff;
+  margin-right: 10px;
+}
+
+.view-button:hover {
+  background-color: #218838;
+  color: #fff;
+}
+
+.delete-button {
+  background-color: #d22929; 
+  color: #fff;
+  margin-right: 10px;
+}
+
+.delete-button:hover {
+  background-color: #920d0d;
+}

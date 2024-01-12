@@ -3,6 +3,7 @@ import axiosInstance from '../axiosInstance';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useParams } from 'react-router-dom';
+import Button from 'react-bootstrap/Button'; // Import Bootstrap Button
 import '../styles/Activities.css';
 
 const ActivityManager = () => {
@@ -115,9 +116,9 @@ const ActivityManager = () => {
             <strong>{index + 1}. {activity.name}</strong> - {formatDate(activity.date)}, {activity.startTime} - {activity.endTime}
             <p>{activity.description}</p>
             <p>Unique Code: {activity.uniqueCode}</p>
-            <button onClick={() => handleEdit(index)}>Edit</button>
-            <button onClick={() => fetchFeedback(activity.uniqueCode)}>View Feedback</button>
-            <button onClick={() => handleDelete(activity.id)}>Delete</button>
+            <Button className="edit-button" variant="warning" onClick={() => handleEdit(index)}>Edit</Button>
+            <Button className="view-button" variant="info" onClick={() => fetchFeedback(activity.uniqueCode)}>View Feedback</Button>
+            <Button className="delete-button" variant="danger" onClick={() => handleDelete(activity.id)}>Delete</Button>
             <div className="feedback-container">
               {activity.uniqueCode === feedback.uniqueCode && (
                 <div>
@@ -131,7 +132,7 @@ const ActivityManager = () => {
                         </li>
                       ))}
                   </ul>
-                  <button onClick={closeFeedback}>Close</button>
+                  <Button className="close-button" variant="secondary" onClick={closeFeedback}>Close</Button>
                 </div>
               )}
             </div>
@@ -241,7 +242,9 @@ const ActivityManager = () => {
           </div>
 
           <div className="form-input">
-            <button type="submit">{editingIndex !== null ? 'Update Activity' : 'Create Activity'}</button>
+            <Button type="submit" variant={editingIndex !== null ? 'warning' : 'success'}>   
+              {editingIndex !== null ? 'Update Activity' : 'Create Activity'}
+            </Button>
           </div>
         </form>
       </div>
