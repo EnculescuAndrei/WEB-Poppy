@@ -3,6 +3,7 @@ import axiosInstance from '../axiosInstance';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useParams } from 'react-router-dom';
+import '../styles/Activities.css';
 
 const ActivityManager = () => {
   const [activities, setActivities] = useState([]);
@@ -15,6 +16,10 @@ const ActivityManager = () => {
     endTime: '',
   });
   const [editingIndex, setEditingIndex] = useState(null);
+  const [feedback, setFeedback] = useState({
+    uniqueCode: '',
+    data: [],
+  });
   const { professorId } = useParams();
 
   const fetchActivities = useCallback(async () => {
@@ -26,11 +31,28 @@ const ActivityManager = () => {
     }
   }, [professorId]);
 
+  const fetchFeedback = useCallback(async (uniqueCode) => {
+    try {
+      const response = await axiosInstance.get(`/activities/${uniqueCode}/feedback`);
+      setFeedback({
+        uniqueCode,
+        data: response.data,
+      });
+    } catch (error) {
+      console.error('Error fetching feedback:', error);
+    }
+  }, []);
+
   useEffect(() => {
     fetchActivities();
+    const feedbackInterval = setInterval(() => {
+      if (feedback.uniqueCode) {
+        fetchFeedback(feedback.uniqueCode);
+      }
+    }, 1000);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchActivities]);
+    return () => clearInterval(feedbackInterval); // Cleanup on component unmount
+  }, [fetchActivities, fetchFeedback, feedback.uniqueCode]);
 
   const createActivity = async () => {
     try {
@@ -63,6 +85,28 @@ const ActivityManager = () => {
     }
   };
 
+  const closeFeedback = () => {
+    setFeedback({
+      uniqueCode: '',
+      data: [],
+    });
+  };
+
+  const convertToEmoji = (reactType) => {
+    switch (reactType) {
+      case 'Smiley':
+        return '😀';
+      case 'Frowny':
+        return '☹️';
+      case 'Surprised':
+        return '😲';
+      case 'Confused':
+        return '😕';
+      default:
+        return reactType;
+    }
+  };
+
   const displayActivities = () => {
     return (
       <ul>
@@ -72,7 +116,25 @@ const ActivityManager = () => {
             <p>{activity.description}</p>
             <p>Unique Code: {activity.uniqueCode}</p>
             <button onClick={() => handleEdit(index)}>Edit</button>
+            <button onClick={() => fetchFeedback(activity.uniqueCode)}>View Feedback</button>
             <button onClick={() => handleDelete(activity.id)}>Delete</button>
+            <div className="feedback-container">
+              {activity.uniqueCode === feedback.uniqueCode && (
+                <div>
+                  <h4>Feedback</h4>
+                  <ul>
+                    {feedback.data
+                      .sort((a, b) => new Date(b.reactTime) - new Date(a.reactTime))
+                      .map((feedbackItem, index) => (
+                        <li key={index}>
+                          <p>{convertToEmoji(feedbackItem.reactType)}-{new Date(feedbackItem.reactTime).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}</p>
+                        </li>
+                      ))}
+                  </ul>
+                  <button onClick={closeFeedback}>Close</button>
+                </div>
+              )}
+            </div>
           </li>
         ))}
       </ul>
@@ -131,31 +193,64 @@ const ActivityManager = () => {
   };
 
   return (
-    <div>
+    <div className="activity-manager">
       <h1>Activity Manager</h1>
 
-      <div>
+      <div className="form-container">
         <form onSubmit={editingIndex !== null ? handleUpdate : handleCreate}>
-          <label>Name:</label>
-          <input type="text" name="name" value={formData.name} onChange={handleChange} required />
-          <label>Date:</label>
-          <DatePicker selected={formData.date} onChange={handleDateChange} dateFormat="yyyy/MM/dd" />
-          <label>Description:</label>
-          <input type="text" name="description" value={formData.description} onChange={handleChange} required />
-          <label>Unique Code:</label>
-          <input type="text" name="uniqueCode" value={formData.uniqueCode} onChange={handleChange} required />
-          <label>Start Time:</label>
-          <input type="text" name="startTime" value={formData.startTime} onChange={handleChange} required />
-          <label>End Time:</label>
-          <input type="text" name="endTime" value={formData.endTime} onChange={handleChange} required />
+          <div className="form-label">
+            <label>Name:</label>
+          </div>
+          <div className="form-input">
+            <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+          </div>
 
-          <button type="submit">{editingIndex !== null ? 'Update Activity' : 'Create Activity'}</button>
+          <div className="form-label">
+            <label>Date:</label>
+          </div>
+          <div className="form-input">
+            <DatePicker selected={formData.date} onChange={handleDateChange} dateFormat="yyyy/MM/dd" />
+          </div>
+
+          <div className="form-label">
+            <label>Description:</label>
+          </div>
+          <div className="form-input">
+            <input type="text" name="description" value={formData.description} onChange={handleChange} required />
+          </div>
+
+          <div className="form-label">
+            <label>Unique Code:</label>
+          </div>
+          <div className="form-input">
+            <input type="text" name="uniqueCode" value={formData.uniqueCode} onChange={handleChange} required />
+          </div>
+
+          <div className="form-label">
+            <label>Start Time:</label>
+          </div>
+          <div className="form-input">
+            <input type="text" name="startTime" value={formData.startTime} onChange={handleChange} required />
+          </div>
+
+          <div className="form-label">
+            <label>End Time:</label>
+          </div>
+          <div className="form-input">
+            <input type="text" name="endTime" value={formData.endTime} onChange={handleChange} required />
+          </div>
+
+          <div className="form-input">
+            <button type="submit">{editingIndex !== null ? 'Update Activity' : 'Create Activity'}</button>
+          </div>
         </form>
       </div>
 
-      <div>
-        <h2>Activity List</h2>
-        {displayActivities()}
+      <div className="activity-list-container">
+        <div className="activity-list">
+          <h2>Activity List</h2>
+          {displayActivities()}
+        </div>
       </div>
     </div>
   );

@@ -1,0 +1,27 @@
+#codeInputBar {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+  
+  #activitiesContainer {
+    margin-top: 50px; 
+  }
+
+  .activities-container button {
+    font-size: 30px; 
+    background-color: transparent;
+    color: #4CAF50; 
+    transition: background-color 0.3s ease;
+  }
+  
+  .activities-container button:hover {
+    background-color: #4CAF50;
+  }
+
+  .activities-container button:disabled {
+    background-color: #756c6c; 
+    cursor: not-allowed; 
+  }

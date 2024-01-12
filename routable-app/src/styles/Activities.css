@@ -1,0 +1,13 @@
+.container {
+  display: flex;
+}
+
+.feedback-container {
+  display: flex;
+  position: fixed;
+  top: 0;
+  right: 600px;
+  overflow-y: auto;
+  max-height: 100vh;
+  direction: rtl;
+}
